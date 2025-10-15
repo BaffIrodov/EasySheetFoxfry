@@ -105,6 +105,60 @@ function injectButtons(root = document) {
     });
 }
 
+// === SINGLE LISTING PAGE INJECTION ===
+// Для страниц вида /market/listings/730/<Item Name>
+function injectListingPageButton(root = document) {
+    const titleEl = root.querySelector('#largeiteminfo_item_name.hover_item_name'); // <h1 id="largeiteminfo_item_name">
+    if (!titleEl || titleEl.dataset.rcInjected === '1') return;
+
+    // Кнопка
+    const btn = document.createElement('button');
+    btn.className = 'rc-btn';
+    btn.type = 'button';
+    btn.textContent = BUTTON_TEXT;
+    btn.style.marginLeft = '8px';
+    btn.style.verticalAlign = 'middle';
+
+    // Клик — отправляем URL страницы в таблицу
+    btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        btn.classList.remove('ok', 'err');
+        btn.classList.add('sending');
+
+        const gameEl = document.querySelector('#largeiteminfo_game_name');
+
+        try {
+            const data = await postToSheets([location.href], {
+                pageUrl: location.href,
+                itemName: titleEl.textContent.trim() || null,
+                gameName: gameEl ? gameEl.textContent.trim() : null,
+                clickedAt: new Date().toISOString()
+            });
+
+            applyResultToButton(btn, data.message);
+        } catch (err) {
+            console.error('Send failed (listing page):', err);
+            if (String(err.message || '').toLowerCase().includes('unauthorized')) {
+                applyErrorToButton(btn, 'Нет доступа');
+            } else {
+                applyErrorToButton(btn, 'Ошибка');
+            }
+        }
+    });
+
+    // Важно: вставляем кнопку ВНУТРЬ <h1>, чтобы она была справа от названия
+    // (так избегаем ломки макета блоками рядом).
+    titleEl.appendChild(btn);
+
+    // Заодно делаем заголовок "строчным блоком", чтобы кнопка не падала на новую строку,
+    // даже если на странице свои стили для h1
+    titleEl.style.display = 'inline-block';
+
+    titleEl.dataset.rcInjected = '1';
+}
+
 // === RESCANNERS & HOOKS ===
 let observerStarted = false;
 let intervalId = null;
@@ -122,7 +176,10 @@ function startMutationObserver() {
         }
         if (shouldScan) {
             // Мелкая дебаунс-защита
-            queueMicrotask(() => injectButtons(document));
+            queueMicrotask(() => {
+                injectButtons(document);
+                injectListingPageButton(document);
+            });
         }
     });
 
@@ -134,6 +191,7 @@ function startSafetyInterval() {
     // Раз в 1000 мс пробегаемся по DOM (дешёвая операция: только query + метка dataset)
     intervalId = setInterval(() => {
         injectButtons(document);
+        injectListingPageButton(document);
         if (location.href !== lastUrl) {
             lastUrl = location.href;
             // При смене URL многие сайты перерисовывают таблицу
@@ -154,6 +212,7 @@ function hookSpaNavigation() {
                 if (location.href !== lastUrl) {
                     lastUrl = location.href;
                     injectButtons(document);
+                    injectListingPageButton(document);
                 }
             }, 50);
             return ret;
@@ -167,6 +226,7 @@ function hookSpaNavigation() {
             if (location.href !== lastUrl) {
                 lastUrl = location.href;
                 injectButtons(document);
+                injectListingPageButton(document);
             }
         }, 50);
     });
@@ -188,6 +248,7 @@ function hookSpaNavigation() {
 // === BOOT ===
 function init() {
     injectButtons(document);
+    injectListingPageButton(document);
     startMutationObserver();
     startSafetyInterval();
     hookSpaNavigation();
