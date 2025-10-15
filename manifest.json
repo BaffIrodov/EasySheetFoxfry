@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Table Row --> Google Sheets",
+  "version": "1.0.0",
+  "description": "Adds a button to each row of the table and sends the row data to Google Sheets.",
+  "content_scripts": [
+    {
+      "matches": ["https://steamcommunity.com/market/search?appid=730/*", "https://steamcommunity.com/market/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://script.google.com/*",
+    "https://script.googleusercontent.com/*"
+  ]
+}
+

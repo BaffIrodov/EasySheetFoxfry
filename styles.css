@@ -1,0 +1,33 @@
+.rc-btn {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 2px 8px;
+    border: 1px solid #555;
+    border-radius: 6px;
+    background: #2a475e;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.rc-btn:hover {
+    background: #3c6e91;
+}
+
+.rc-btn.sending {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.rc-btn.ok {
+    background: #1b6e1b;
+    border-color: #0f5a0f;
+}
+
+.rc-btn.err {
+    background: #a63131;
+    border-color: #872626;
+}
