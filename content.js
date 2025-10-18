@@ -1,5 +1,5 @@
 // === CONFIGURATION ===
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbybOa_apP4MHNCIGinJT_8dwbj_gRPBOuR2CMM_V-ANz4qDtq2PbE-eyorAxtAfAapk/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx-X3tzak6h5I7x4hztmFwkO22DSnSdQhWqgG8JWT4MKfjNOOZ5lbjg34eq8BYW1Nt5/exec';
 const SECRET = 'MY_SECRET_123';
 const BUTTON_TEXT = 'Foxfry';
 
